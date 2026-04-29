@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Acti Score – LFAdN</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --orange: #E8631A;
+      --orange-dk: #C4501A;
+      --orange-lt: #FF8C42;
+      --bg: #F6F3EF;
+      --card: #FFFFFF;
+      --text: #1C1C1C;
+      --muted: #777;
+      --green: #27AE60;
+      --lime: #8BC34A;
+      --yellow: #F4C430;
+      --red: #E74C3C;
+      --blue: #2980B9;
+      --r: 14px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 100px; }
+
+    /* ── NAV ── */
+    nav {
+      background: var(--orange);
+      position: sticky; top: 0; z-index: 200;
+      display: flex; justify-content: center; flex-wrap: wrap;
+      box-shadow: 0 3px 12px rgba(0,0,0,.25);
+    }
+    nav button {
+      background: none; border: none; color: #fff;
+      font-family: 'Barlow Condensed', sans-serif; font-size: .88rem; font-weight: 700;
+      letter-spacing: .07em; text-transform: uppercase;
+      padding: 14px 15px; cursor: pointer;
+      display: flex; align-items: center; gap: 5px;
+      transition: background .18s;
+      border-bottom: 3px solid transparent;
+    }
+    nav button:hover { background: rgba(0,0,0,.15); }
+    nav button.active { background: rgba(0,0,0,.2); border-bottom-color: #fff; }
+
+    /* ── SECTIONS ── */
+    .section { display: none; padding: 28px 18px; max-width: 820px; margin: 0 auto; }
+    .section.active { display: block; }
+
+    /* ── TYPOGRAPHY ── */
+    h1 { font-family: 'Barlow Condensed', sans-serif; font-size: 3rem; font-weight: 900; color: var(--orange); letter-spacing: -.02em; }
+    h2 { font-family: 'Barlow Condensed', sans-serif; font-size: 2rem; font-weight: 800; color: var(--orange); margin-bottom: 18px; }
+    h3 { font-family: 'Barlow Condensed', sans-serif; font-size: 1.35rem; font-weight: 700; margin-bottom: 10px; }
+    p { line-height: 1.7; }
+
+    /* ── HERO ── */
+    .hero { text-align: center; padding: 36px 16px 24px; }
+    .hex {
+      width: 110px; height: 110px; margin: 0 auto 22px;
+      background: linear-gradient(135deg, var(--orange), var(--orange-dk));
+      clip-path: polygon(50% 0%,93% 25%,93% 75%,50% 100%,7% 75%,7% 25%);
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-family: 'Barlow Condensed', sans-serif; font-size: 1.5rem; font-weight: 900;
+      box-shadow: 0 6px 24px rgba(232,99,26,.35);
+    }
+    .intro { max-width: 580px; margin: 12px auto 28px; color: var(--muted); font-size: .95rem; }
+    .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; margin: 24px 0; }
+    .step-card {
+      background: var(--card); border-radius: var(--r); padding: 18px 14px; text-align: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,.06); border-top: 4px solid var(--orange);
+      font-size: .85rem;
+    }
+    .step-num {
+      width: 34px; height: 34px; background: var(--orange); color: #fff; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; margin: 0 auto 10px;
+      font-family: 'Barlow Condensed', sans-serif; font-size: 1.2rem; font-weight: 900;
+    }
+    .attribution { text-align: center; color: var(--orange); font-weight: 800; font-size: .82rem; margin-top: 36px; padding-top: 16px; border-top: 1px solid #E8E0D8; letter-spacing: .08em; }
+
+    /* ── CARDS ── */
+    .card { background: var(--card); border-radius: var(--r); padding: 22px; margin-bottom: 16px; box-shadow: 0 2px 10px rgba(0,0,0,.06); }
+
+    /* ── BUTTONS ── */
+    .btn {
+      background: var(--orange); color: #fff; border: none; padding: 12px 24px;
+      border-radius: 9px; font-family: 'Barlow Condensed', sans-serif; font-size: 1.1rem; font-weight: 800;
+      cursor: pointer; letter-spacing: .05em; transition: background .18s, transform .1s;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .btn:hover { background: var(--orange-dk); }
+    .btn:active { transform: scale(.97); }
+    .btn-outline { background: #fff; color: var(--orange); border: 2px solid var(--orange); }
+    .btn-outline:hover { background: #FFF3EC; }
+    .btn-danger { background: var(--red); }
+    .btn-danger:hover { background: #C0392B; }
+    .btn-sm { padding: 8px 16px; font-size: .9rem; }
+    .btn-xs { padding: 5px 12px; font-size: .8rem; }
+
+    /* ── FORMS ── */
+    .form-group { margin-bottom: 18px; }
+    label { display: block; font-weight: 800; font-size: .88rem; margin-bottom: 7px; text-transform: uppercase; letter-spacing: .04em; }
+    select {
+      width: 100%; padding: 12px 16px; border: 2px solid #E0D8D0; border-radius: 9px;
+      font-family: 'Nunito', sans-serif; font-size: 1rem; background: #fff; cursor: pointer;
+      appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23E8631A' stroke-width='2' fill='none'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 14px center;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    select:focus { outline: none; border-color: var(--orange); box-shadow: 0 0 0 3px rgba(232,99,26,.15); }
+
+    /* ── RESULT CARD ── */
+    .result-card {
+      background: linear-gradient(135deg, #FFF8F4, #FFF); border-radius: var(--r); padding: 24px;
+      text-align: center; border: 2px solid var(--orange);
+      box-shadow: 0 4px 20px rgba(232,99,26,.15); margin-top: 22px;
+    }
+    .result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 14px; }
+    .result-item { padding: 16px; background: #fff; border-radius: 10px; border: 1px solid #F0E8E0; }
+    .result-val { font-family: 'Barlow Condensed', sans-serif; font-size: 2.6rem; font-weight: 900; color: var(--orange); line-height: 1; }
+    .result-label { font-size: .75rem; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 4px; }
+
+    /* ── INFO BOXES ── */
+    .info-box { background: #FFF8F0; border-left: 4px solid var(--orange); border-radius: 0 10px 10px 0; padding: 14px 16px; margin: 14px 0; font-size: .9rem; line-height: 1.7; }
+    .info-box.warn { background: #FFF0F0; border-color: var(--red); }
+    .formula-box { background: #F0F6FF; border-left: 4px solid var(--blue); border-radius: 0 10px 10px 0; padding: 14px 16px; margin: 12px 0; font-size: .92rem; }
+    .badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: .78rem; font-weight: 800; letter-spacing: .04em; }
+    .badge-blue { background: #EBF5FB; color: #2980B9; }
+    .badge-red { background: #FDEDEC; color: #E74C3C; }
+
+    /* ── COUNTER BAR ── */
+    .counter-bar {
+      background: var(--card); border-radius: var(--r); padding: 18px 16px; margin-bottom: 18px;
+      box-shadow: 0 2px 10px rgba(0,0,0,.07);
+      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; text-align: center;
+    }
+    .ctr-label { font-size: .7rem; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+    .ctr-val { font-family: 'Barlow Condensed', sans-serif; font-size: 2.1rem; font-weight: 900; line-height: 1; margin-top: 3px; }
+    .ctr-unit { font-size: .7rem; color: var(--muted); }
+    .ctr-sep { width: 1px; background: #EEE; height: 100%; position: absolute; }
+
+    /* ── DAY SELECTOR ── */
+    .day-selector { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 18px; }
+    .day-btn {
+      flex: 1; min-width: 78px; padding: 9px 8px;
+      background: #fff; border: 2px solid #E0D8D0; border-radius: 9px;
+      font-family: 'Barlow Condensed', sans-serif; font-size: .88rem; font-weight: 800;
+      cursor: pointer; transition: all .15s; text-align: center; position: relative;
+    }
+    .day-btn:hover { border-color: var(--orange); color: var(--orange); }
+    .day-btn.active { background: var(--orange); color: #fff; border-color: var(--orange); }
+    .day-btn.has-data::after { content: '●'; color: var(--green); font-size: .55rem; position: absolute; top: 4px; right: 5px; }
+
+    /* ── ACTIVITY BUTTONS ── */
+    .act-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(115px, 1fr)); gap: 10px; margin: 12px 0; }
+    .act-btn {
+      background: #fff; border: 2px solid #E0D8D0; border-radius: var(--r); padding: 14px 8px;
+      text-align: center; cursor: pointer; transition: all .15s; font-family: 'Nunito', sans-serif;
+    }
+    .act-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 16px rgba(0,0,0,.12); }
+    .act-btn:active { transform: scale(.95); }
+    .act-btn.mod { border-top: 4px solid #2980B9; }
+    .act-btn.int { border-top: 4px solid #E74C3C; }
+    .act-btn .ae { font-size: 1.9rem; display: block; }
+    .act-btn .an { font-size: .72rem; font-weight: 800; display: block; margin-top: 5px; color: var(--text); }
+    .act-btn .ac { font-size: .68rem; display: block; margin-top: 3px; font-weight: 700; }
+    .act-btn.mod .ac { color: #2980B9; }
+    .act-btn.int .ac { color: #E74C3C; }
+
+    .mini-stats { display: flex; gap: 10px; margin-bottom: 14px; }
+    .mini-stat { flex: 1; padding: 12px; border-radius: 10px; text-align: center; }
+    .mini-stat.mod-s { background: #EBF5FB; }
+    .mini-stat.int-s { background: #FDEDEC; }
+    .mini-stat .ms-label { font-size: .7rem; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; }
+    .mini-stat.mod-s .ms-label { color: #2980B9; }
+    .mini-stat.int-s .ms-label { color: #E74C3C; }
+    .mini-stat .ms-val { font-family: 'Barlow Condensed', sans-serif; font-size: 1.7rem; font-weight: 900; line-height: 1.1; margin-top: 2px; }
+    .mini-stat.mod-s .ms-val { color: #2980B9; }
+    .mini-stat.int-s .ms-val { color: #E74C3C; }
+
+    /* ── FOOD GRID ── */
+    .food-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 9px; margin: 12px 0; }
+    .food-btn {
+      background: #fff; border: 2px solid #E8E0D8; border-radius: var(--r); padding: 12px 7px;
+      text-align: center; cursor: pointer; transition: all .15s; font-family: 'Nunito', sans-serif;
+      position: relative;
+    }
+    .food-btn:hover { border-color: var(--orange); transform: translateY(-2px); box-shadow: 0 5px 14px rgba(232,99,26,.18); }
+    .food-btn:active { transform: scale(.93); }
+    .food-btn .fe { font-size: 1.9rem; display: block; pointer-events: none; }
+    .food-btn .fn { font-size: .68rem; font-weight: 800; display: block; margin-top: 4px; line-height: 1.2; pointer-events: none; }
+    .food-btn .fk { background: var(--orange); color: #fff; border-radius: 20px; padding: 2px 8px; font-size: .68rem; font-weight: 900; display: inline-block; margin-top: 4px; pointer-events: none; }
+    .food-btn.static { cursor: default; }
+    .food-btn.static:hover { transform: none; box-shadow: none; border-color: #E8E0D8; }
+    @keyframes pop { 0%{transform:scale(1)} 40%{transform:scale(1.18)} 100%{transform:scale(1)} }
+    .food-btn.popped { animation: pop .28s ease; border-color: var(--orange); }
+    @keyframes floatup { 0%{opacity:1;transform:translateY(0)} 100%{opacity:0;transform:translateY(-28px)} }
+    .float-kcal { position:absolute; top:-10px; left:50%; transform:translateX(-50%); background:var(--orange); color:#fff; border-radius:20px; padding:2px 8px; font-size:.75rem; font-weight:900; pointer-events:none; animation:floatup .7s ease forwards; z-index:10; white-space:nowrap; }
+
+    /* ── FOOD TAGS ── */
+    .tags-wrap { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0; min-height: 28px; }
+    .tag { background: #FFF3EC; color: var(--orange-dk); border: 1.5px solid #FFD4B5; border-radius: 20px; padding: 4px 10px; font-size: .78rem; font-weight: 800; display: inline-flex; align-items: center; gap: 5px; }
+    .tag .rm { cursor: pointer; opacity: .5; font-size: .85rem; }
+    .tag .rm:hover { opacity: 1; }
+
+    /* ── RECAP TABLE ── */
+    .rtable { width: 100%; border-collapse: collapse; }
+    .rtable th, .rtable td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #F0E8E0; font-size: .88rem; }
+    .rtable th { background: var(--orange); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-size: .98rem; letter-spacing: .04em; }
+    .rtable tr:last-child td { border-bottom: none; }
+    .rtable tr:hover td { background: #FFF8F4; }
+
+    /* ── SCALE ── */
+    .scale { border-radius: var(--r); overflow: hidden; margin: 18px 0; }
+    .scale-row { display: grid; grid-template-columns: 1fr 1fr; padding: 16px 22px; align-items: center; }
+    .scale-row .sr-range { font-family: 'Barlow Condensed', sans-serif; font-size: 1.35rem; font-weight: 900; }
+    .scale-row .sr-label { font-family: 'Barlow Condensed', sans-serif; font-size: 1.2rem; font-weight: 800; text-align: right; }
+    .scale-row.s0 { background: #27AE60; color: #fff; }
+    .scale-row.s1 { background: #8BC34A; color: #fff; }
+    .scale-row.s2 { background: #F4C430; color: #222; }
+    .scale-row.s3 { background: #E74C3C; color: #fff; }
+    .scale-row.hl { outline: 4px solid #fff; box-shadow: 0 0 0 4px rgba(0,0,0,.25); position: relative; z-index: 1; transform: scale(1.02); }
+
+    /* ── WEEK RESULT ── */
+    .week-res { padding: 30px; border-radius: var(--r); text-align: center; margin-bottom: 20px; color: #fff; transition: background .5s; }
+    .wr-score { font-family: 'Barlow Condensed', sans-serif; font-size: 3.5rem; font-weight: 900; line-height: 1; }
+    .wr-label { font-size: 1.15rem; font-weight: 800; margin-top: 8px; }
+
+    /* ── MISC ── */
+    .section-intro { color: var(--muted); margin-bottom: 20px; font-size: .92rem; }
+    .row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+    .spacer { height: 12px; }
+    .warn-banner { background: #FFF0F0; border: 2px solid var(--red); border-radius: 10px; padding: 14px 16px; margin-bottom: 18px; font-size: .9rem; display: none; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width:580px) {
+      h1 { font-size: 2.2rem; }
+      h2 { font-size: 1.6rem; }
+      .food-grid { grid-template-columns: repeat(auto-fill, minmax(82px,1fr)); gap: 7px; }
+      .counter-bar { grid-template-columns: 1fr; gap: 6px; }
+      nav button { padding: 10px 8px; font-size: .76rem; gap: 3px; }
+      .result-grid { grid-template-columns: 1fr; }
+      .scale-row { padding: 12px 14px; }
+      .scale-row .sr-range { font-size: 1.1rem; }
+      .scale-row .sr-label { font-size: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ NAV ══ -->
+<nav id="main-nav">
+  <button onclick="showSection('accueil')" id="nav-accueil" class="active">🏠 Accueil</button>
+  <button onclick="showSection('profil')" id="nav-profil">👤 Profil</button>
+  <button onclick="showSection('depenses')" id="nav-depenses">⚡ Dépenses</button>
+  <button onclick="showSection('calories')" id="nav-calories">🍽️ Calories</button>
+  <button onclick="showSection('jouez')" id="nav-jouez">🎮 Jouez</button>
+  <button onclick="showSection('recap')" id="nav-recap">📊 Récap</button>
+</nav>
+
+<!-- ══ ACCUEIL ══ -->
+<section id="accueil" class="section active">
+  <div class="hero">
+    <div class="hex">LFAdN</div>
+    <h1>ACTI SCORE</h1>
+    <p class="intro">
+      Cette application est un challenge pour atteindre l'<strong>équilibre énergétique</strong> — 
+      un équilibre entre la <strong>dépense énergétique</strong> (métabolique + physique) 
+      et les <strong>apports caloriques</strong> liés à l'alimentation.
+    </p>
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <strong>Profil</strong>
+        <p style="color:var(--muted);margin-top:6px">Renseigne ton âge, taille, poids et sexe</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <strong>Dépenses</strong>
+        <p style="color:var(--muted);margin-top:6px">Comprends les types d'activités physiques</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <strong>Calories</strong>
+        <p style="color:var(--muted);margin-top:6px">Explore les apports caloriques des aliments</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">4</div>
+        <strong>Jouez !</strong>
+        <p style="color:var(--muted);margin-top:6px">Enregistre ta semaine et mesure ton équilibre</p>
+      </div>
+    </div>
+    <button class="btn" onclick="showSection('profil')">Commencer →</button>
+  </div>
+  <p class="attribution">APPLICATION DÉVELOPPÉE PAR SÉBASTIEN PEROTTI</p>
+</section>
+
+<!-- ══ PROFIL ══ -->
+<section id="profil" class="section">
+  <h2>Mon Profil</h2>
+  <div class="card">
+    <p class="section-intro">Renseigne les éléments ci-dessous pour définir ton profil :</p>
+    <div class="form-group">
+      <label>Âge</label>
+      <select id="sel-age" onchange="calcBMR()"><option value="">— Sélectionner —</option></select>
+    </div>
+    <div class="form-group">
+      <label>Taille (en cm)</label>
+      <select id="sel-taille" onchange="calcBMR()"><option value="">— Sélectionner —</option></select>
+    </div>
+    <div class="form-group">
+      <label>Poids (en kg)</label>
+      <select id="sel-poids" onchange="calcBMR()"><option value="">— Sélectionner —</option></select>
+    </div>
+    <div class="form-group">
+      <label>Sexe</label>
+      <select id="sel-sexe" onchange="calcBMR()">
+        <option value="">— Sélectionner —</option>
+        <option value="M">Masculin</option>
+        <option value="F">Féminin</option>
+      </select>
+    </div>
+  </div>
+  <div class="result-card" id="profil-result" style="display:none">
+    <p style="font-size:.8rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:14px">D'après ton profil</p>
+    <div class="result-grid">
+      <div class="result-item">
+        <div class="result-label">Dépense métabolique quotidienne</div>
+        <div class="result-val" id="bmr-daily">—</div>
+        <div style="font-size:.8rem;color:var(--muted)">kcal / jour</div>
+      </div>
+      <div class="result-item">
+        <div class="result-label">Dépense métabolique horaire</div>
+        <div class="result-val" id="bmr-hourly">—</div>
+        <div style="font-size:.8rem;color:var(--muted)">kcal / heure</div>
+      </div>
+    </div>
+  </div>
+  <div class="info-box">
+    La dépense métabolique est calculée selon l'<strong>équation de MIFFLIN St Jeor</strong>, réputée très fiable. 
+    Elle tient compte de l'âge, de la taille, du poids et du sexe de l'individu.
+  </div>
+</section>
+
+<!-- ══ DÉPENSES ══ -->
+<section id="depenses" class="section">
+  <h2>Dépenses Physiques</h2>
+  <div class="info-box">
+    La dépense métabolique quotidienne est la quantité de calories brûlées au repos. 
+    Pour calculer les calories dépensées dans une journée, on ajoute à la dépense métabolique 
+    les dépenses liées à l'activité physique.
+  </div>
+  <div class="card">
+    <span class="badge badge-blue" style="margin-bottom:10px">MODÉRÉE</span>
+    <h3>Activité physique modérée</h3>
+    <p style="color:var(--muted);font-size:.9rem;margin-bottom:12px">
+      Marche, jardinage, gymnastique, yoga, déplacements à vélo
+    </p>
+    <div class="formula-box">
+      <strong>30 min d'activité modérée</strong> = Dépense métabolique horaire <strong style="color:#2980B9">× 1,5</strong>
+    </div>
+  </div>
+  <div class="card">
+    <span class="badge badge-red" style="margin-bottom:10px">INTENSE</span>
+    <h3>Activité physique intense</h3>
+    <p style="color:var(--muted);font-size:.9rem;margin-bottom:12px">
+      Sports et activités très intenses, travaux lourds, bûcheronnage
+    </p>
+    <div class="formula-box">
+      <strong>30 min d'activité intense</strong> = Dépense métabolique horaire <strong style="color:#E74C3C">× 2,5</strong>
+    </div>
+  </div>
+  <p style="font-size:.8rem;color:var(--muted);margin-top:8px">
+    Source : Vermorel et al. Energie. In : Apports nutritionnels conseillés pour la population française. Martin A, Paris : Tec et Doc, 2001.
+  </p>
+</section>
+
+<!-- ══ CALORIES ══ -->
+<section id="calories" class="section">
+  <h2>Tableau des Calories</h2>
+  <p class="section-intro">
+    Chaque jour, pour établir l'équilibre, vous devrez également ajouter les calories ingérées. 
+    Consultez ce tableau de référence — puis allez dans <strong>Jouez</strong> pour cliquer sur les aliments !
+  </p>
+  <div class="food-grid" id="calories-grid"></div>
+</section>
+
+<!-- ══ JOUEZ ══ -->
+<section id="jouez" class="section">
+  <h2>Jouez !</h2>
+  <div class="warn-banner" id="jouez-warn">
+    ⚠️ <strong>Complète d'abord ton profil</strong> pour que les calculs soient corrects.
+    <button class="btn btn-sm" onclick="showSection('profil')" style="margin-left:10px">→ Profil</button>
+  </div>
+  <p class="section-intro">Indique pour chacun des jours de la semaine tes dépenses liées à l'activité physique et tes apports caloriques.</p>
+
+  <!-- Day selector -->
+  <div class="day-selector" id="day-selector"></div>
+
+  <!-- Counter bar -->
+  <div class="counter-bar">
+    <div>
+      <div class="ctr-label">⬆️ Apports</div>
+      <div class="ctr-val" id="c-intake" style="color:var(--green)">0</div>
+      <div class="ctr-unit">kcal</div>
+    </div>
+    <div>
+      <div class="ctr-label">⬇️ Dépenses</div>
+      <div class="ctr-val" id="c-expense" style="color:var(--red)">0</div>
+      <div class="ctr-unit">kcal</div>
+    </div>
+    <div>
+      <div class="ctr-label">⚖️ Équilibre</div>
+      <div class="ctr-val" id="c-balance">0</div>
+      <div class="ctr-unit">kcal</div>
+    </div>
+  </div>
+
+  <!-- Activities -->
+  <div class="card">
+    <h3>🏅 Activités physiques — <span id="act-day-lbl" style="color:var(--orange)"></span></h3>
+    <p style="font-size:.85rem;color:var(--muted);margin-bottom:14px">Clique sur une activité pour ajouter <strong>30 minutes</strong></p>
+    <div class="mini-stats">
+      <div class="mini-stat mod-s">
+        <div class="ms-label">🚶 Modérée</div>
+        <div class="ms-val"><span id="mod-mins">0</span> min</div>
+      </div>
+      <div class="mini-stat int-s">
+        <div class="ms-label">🏃 Intense</div>
+        <div class="ms-val"><span id="int-mins">0</span> min</div>
+      </div>
+    </div>
+    <p style="font-size:.82rem;font-weight:800;color:#2980B9;margin-bottom:8px">ACTIVITÉS MODÉRÉES</p>
+    <div class="act-grid" id="act-mod"></div>
+    <p style="font-size:.82rem;font-weight:800;color:#E74C3C;margin:14px 0 8px">ACTIVITÉS INTENSES</p>
+    <div class="act-grid" id="act-int"></div>
+    <div style="margin-top:14px">
+      <button class="btn btn-outline btn-sm" onclick="resetAct()">↩ Réinitialiser activités</button>
+    </div>
+  </div>
+
+  <!-- Food -->
+  <div class="card">
+    <h3>🍴 Aliments consommés — <span id="food-day-lbl" style="color:var(--orange)"></span></h3>
+    <p style="font-size:.85rem;color:var(--muted);margin-bottom:10px">Clique sur chaque aliment que tu as mangé</p>
+    <div style="margin-bottom:8px">
+      <strong id="intake-ttl" style="color:var(--green);font-family:'Barlow Condensed',sans-serif;font-size:1.25rem">Total : 0 kcal</strong>
+    </div>
+    <div class="tags-wrap" id="food-tags"></div>
+    <div class="food-grid" id="jouez-food-grid"></div>
+    <div style="margin-top:14px">
+      <button class="btn btn-outline btn-sm" onclick="resetFood()">↩ Réinitialiser aliments</button>
+    </div>
+  </div>
+</section>
+
+<!-- ══ RECAP ══ -->
+<section id="recap" class="section">
+  <h2>Bilan de la Semaine</h2>
+  <div class="week-res" id="week-res" style="background:#BBB">
+    <div class="wr-score" id="wr-score">—</div>
+    <div class="wr-label" id="wr-label">Complète ta semaine pour voir ton bilan</div>
+  </div>
+  <div class="card">
+    <h3>Détail par jour</h3>
+    <div style="overflow-x:auto">
+      <table class="rtable">
+        <thead><tr><th>Jour</th><th>Apports</th><th>Dépenses totales</th><th>Équilibre</th></tr></thead>
+        <tbody id="recap-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+  <h3 style="margin:20px 0 10px">Grille d'évaluation hebdomadaire</h3>
+  <div class="scale">
+    <div class="scale-row s0" id="sc0"><div class="sr-range">-500 &lt; 0 &lt; +500</div><div class="sr-label">TRÈS BON équilibre ✓</div></div>
+    <div class="scale-row s1" id="sc1"><div class="sr-range">-1000 &lt; 0 &lt; +1000</div><div class="sr-label">Équilibre SATISFAISANT</div></div>
+    <div class="scale-row s2" id="sc2"><div class="sr-range">-2500 &lt; 0 &lt; +2500</div><div class="sr-label">Équilibre FRAGILE</div></div>
+    <div class="scale-row s3" id="sc3"><div class="sr-range">-5000 &lt; 0 &lt; +5000</div><div class="sr-label">DÉSÉQUILIBRE préoccupant</div></div>
+  </div>
+  <button class="btn btn-danger btn-sm" onclick="resetAll()" style="margin-top:14px">🗑 Réinitialiser toute la semaine</button>
+</section>
+
+<script>
+/* ══════════════════════════════════════════
+   DATA
+══════════════════════════════════════════ */
+const FOODS = [
+  { e:'💧', n:'Eau', k:0 },
+  { e:'🍬', n:'Malabar', k:40 },
+  { e:'🍹', n:'Boisson sucrée', k:40 },
+  { e:'🐻', n:'Haribo', k:50 },
+  { e:'🍭', n:'Sucettes', k:50 },
+  { e:'🍬', n:'Carambar', k:60 },
+  { e:'🍟', n:'Chips (sachet)', k:60 },
+  { e:'🥦', n:'Légumes/crudités', k:60 },
+  { e:'🥛', n:'Yaourt nature', k:66 },
+  { e:'🍫', n:'M&Ms', k:70 },
+  { e:'🍊', n:"Jus d'orange", k:75 },
+  { e:'🍎', n:'Pomme', k:90 },
+  { e:'🍪', n:'Biscuit apéro', k:90 },
+  { e:'🍌', n:'Banane', k:110 },
+  { e:'⚡', n:'Boisson énergie', k:110 },
+  { e:'🥚', n:'Kinder Surprise', k:110 },
+  { e:'🧀', n:'Fromage tranche', k:120 },
+  { e:'🍫', n:'Kinder Bueno', k:120 },
+  { e:'🍞', n:'Pain', k:120 },
+  { e:'🫐', n:'Fruits secs/bol', k:123 },
+  { e:'🧋', n:'Cacolac', k:130 },
+  { e:'🥤', n:'Coca / Fanta', k:140 },
+  { e:'🥐', n:'Croissant', k:160 },
+  { e:'🍫', n:'Mars', k:200 },
+  { e:'🥜', n:'Cacahuètes', k:200 },
+  { e:'🥩', n:'Saucisson', k:240 },
+  { e:'🍕', n:'Pizza (part)', k:270 },
+  { e:'🥐', n:'Pain au chocolat', k:300 },
+  { e:'🍟', n:'Frites', k:330 },
+  { e:'🥪', n:'Sandwich', k:350 },
+  { e:'🥗', n:'Salade composée', k:450 },
+  { e:'🥛', n:'Milkshake', k:500 },
+  { e:'🍔', n:'Burger', k:520 },
+  { e:'🍟', n:'Chips Vico', k:540 },
+  { e:'🍽️', n:'Plateau cantine', k:700 },
+];
+
+const ACT_MOD = [
+  { e:'🚶', n:'Marche' }, { e:'🚴', n:'Vélo' }, { e:'🧘', n:'Yoga' },
+  { e:'🌿', n:'Jardinage' }, { e:'🤸', n:'Gym douce' }, { e:'🏊', n:'Natation lente' },
+];
+const ACT_INT = [
+  { e:'🏃', n:'Course' }, { e:'⚽', n:'Football' }, { e:'🏀', n:'Basketball' },
+  { e:'🎾', n:'Tennis' }, { e:'🏋️', n:'Musculation' }, { e:'🥊', n:'Boxe / Arts martiaux' },
+];
+const DAYS = ['Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi','Dimanche'];
+
+/* ══════════════════════════════════════════
+   STATE
+══════════════════════════════════════════ */
+let S = {
+  profile: { age:null, taille:null, poids:null, sexe:null },
+  bmrD: 0, bmrH: 0,
+  currentDay: 'Lundi',
+  days: {}
+};
+DAYS.forEach(d => S.days[d] = { modMins:0, intMins:0, intake:0, foods:[] });
+
+function load() {
+  try {
+    const s = localStorage.getItem('acti-score-v2');
+    if (s) {
+      const p = JSON.parse(s);
+      S = { ...S, ...p };
+      DAYS.forEach(d => { if (!S.days[d]) S.days[d] = { modMins:0, intMins:0, intake:0, foods:[] }; });
+    }
+  } catch(e) {}
+}
+function save() { localStorage.setItem('acti-score-v2', JSON.stringify(S)); }
+
+/* ══════════════════════════════════════════
+   BMR (Mifflin St Jeor)
+══════════════════════════════════════════ */
+function calcBMR() {
+  const a = +document.getElementById('sel-age').value;
+  const t = +document.getElementById('sel-taille').value;
+  const p = +document.getElementById('sel-poids').value;
+  const s = document.getElementById('sel-sexe').value;
+  if (!a||!t||!p||!s) { document.getElementById('profil-result').style.display='none'; return; }
+  const bmr = s==='M' ? (10*p + 6.25*t - 5*a + 5) : (10*p + 6.25*t - 5*a - 161);
+  S.profile = {age:a, taille:t, poids:p, sexe:s};
+  S.bmrD = Math.round(bmr);
+  S.bmrH = Math.round(bmr/24);
+  document.getElementById('bmr-daily').textContent = S.bmrD;
+  document.getElementById('bmr-hourly').textContent = S.bmrH;
+  document.getElementById('profil-result').style.display = 'block';
+  save(); updateCounters();
+}
+
+/* ══════════════════════════════════════════
+   ACTIVITIES
+══════════════════════════════════════════ */
+function addAct(type) {
+  if (!S.bmrH) { alert('⚠️ Complète ton profil d\'abord !'); showSection('profil'); return; }
+  if (type==='mod') S.days[S.currentDay].modMins += 30;
+  else              S.days[S.currentDay].intMins += 30;
+  save(); updateCounters();
+}
+function resetAct() { S.days[S.currentDay].modMins=0; S.days[S.currentDay].intMins=0; save(); updateCounters(); }
+
+/* ══════════════════════════════════════════
+   FOOD
+══════════════════════════════════════════ */
+function addFood(idx) {
+  const f = FOODS[idx];
+  S.days[S.currentDay].foods.push({ e:f.e, n:f.n, k:f.k });
+  S.days[S.currentDay].intake += f.k;
+  save(); updateCounters();
+  // pop animation
+  const btn = document.querySelectorAll('#jouez-food-grid .food-btn')[idx];
+  btn.classList.remove('popped');
+  void btn.offsetWidth;
+  btn.classList.add('popped');
+  if (f.k > 0) {
+    const fl = document.createElement('span');
+    fl.className = 'float-kcal';
+    fl.textContent = '+' + f.k + ' kcal';
+    btn.appendChild(fl);
+    setTimeout(() => fl.remove(), 720);
+  }
+}
+function removeFood(fi) {
+  const day = S.days[S.currentDay];
+  const rem = day.foods.splice(fi, 1)[0];
+  day.intake = Math.max(0, day.intake - rem.k);
+  save(); updateCounters();
+}
+function resetFood() { S.days[S.currentDay].foods=[]; S.days[S.currentDay].intake=0; save(); updateCounters(); }
+
+/* ══════════════════════════════════════════
+   COUNTERS
+══════════════════════════════════════════ */
+function dayExpense(d) {
+  const day = S.days[d];
+  return Math.round((S.bmrD||0) + (day.modMins/30)*S.bmrH*1.5 + (day.intMins/30)*S.bmrH*2.5);
+}
+function updateCounters() {
+  const day = S.days[S.currentDay];
+  const intake  = day.intake;
+  const expense = dayExpense(S.currentDay);
+  const bal     = intake - expense;
+  document.getElementById('c-intake').textContent  = intake;
+  document.getElementById('c-expense').textContent = expense;
+  const bEl = document.getElementById('c-balance');
+  bEl.textContent = (bal>=0?'+':'') + bal;
+  const abs = Math.abs(bal);
+  bEl.style.color = abs<=500 ? 'var(--green)' : abs<=1000 ? 'var(--lime)' : abs<=2500 ? '#DAA500' : 'var(--red)';
+  document.getElementById('mod-mins').textContent = day.modMins;
+  document.getElementById('int-mins').textContent = day.intMins;
+  // food tags
+  const tags = document.getElementById('food-tags');
+  tags.innerHTML = day.foods.map((f,i) =>
+    `<span class="tag">${f.e} ${f.n} (${f.k} kcal) <span class="rm" onclick="removeFood(${i})">✕</span></span>`
+  ).join('');
+  document.getElementById('intake-ttl').textContent = 'Total : ' + intake + ' kcal';
+  // day buttons has-data
+  document.querySelectorAll('.day-btn').forEach((b,i) => {
+    const dd = S.days[DAYS[i]];
+    b.classList.toggle('has-data', dd.intake>0||dd.modMins>0||dd.intMins>0);
+  });
+}
+
+/* ══════════════════════════════════════════
+   RECAP
+══════════════════════════════════════════ */
+function updateRecap() {
+  let weekBal = 0, withData = 0;
+  document.getElementById('recap-tbody').innerHTML = DAYS.map(d => {
+    const day = S.days[d];
+    const intake  = day.intake;
+    const exp     = dayExpense(d);
+    const bal     = intake - exp;
+    const has     = intake>0||day.modMins>0||day.intMins>0;
+    if (has) { weekBal += bal; withData++; }
+    const bc = !has ? '#999' : Math.abs(bal)<=500 ? 'var(--green)' : Math.abs(bal)<=1000 ? 'var(--lime)' : Math.abs(bal)<=2500 ? '#DAA500' : 'var(--red)';
+    return `<tr>
+      <td><strong>${d}</strong>${!has?' <span style="font-size:.75rem;color:#CCC">(vide)</span>':''}</td>
+      <td>${has ? intake+' kcal' : '—'}</td>
+      <td>${has ? exp+' kcal' : '—'}</td>
+      <td style="font-weight:800;color:${bc}">${has ? (bal>=0?'+':'')+bal+' kcal' : '—'}</td>
+    </tr>`;
+  }).join('');
+  // clear highlights
+  ['sc0','sc1','sc2','sc3'].forEach(id => document.getElementById(id).classList.remove('hl'));
+  const wr = document.getElementById('week-res');
+  const ws = document.getElementById('wr-score');
+  const wl = document.getElementById('wr-label');
+  if (!withData) {
+    wr.style.background='#BBB'; ws.textContent='—'; wl.textContent='Complète ta semaine pour voir ton bilan'; return;
+  }
+  ws.textContent = (weekBal>=0?'+':'')+weekBal+' kcal';
+  const abs = Math.abs(weekBal);
+  if (abs<=500)       { wr.style.background='#27AE60'; wr.style.color='#fff'; wl.textContent='TRÈS BON équilibre énergétique ! 🎉'; document.getElementById('sc0').classList.add('hl'); }
+  else if (abs<=1000) { wr.style.background='#8BC34A'; wr.style.color='#fff'; wl.textContent='Équilibre énergétique SATISFAISANT 👍'; document.getElementById('sc1').classList.add('hl'); }
+  else if (abs<=2500) { wr.style.background='#F4C430'; wr.style.color='#222'; wl.textContent='Équilibre énergétique FRAGILE ⚠️'; document.getElementById('sc2').classList.add('hl'); }
+  else                { wr.style.background='#E74C3C'; wr.style.color='#fff'; wl.textContent='DÉSÉQUILIBRE énergétique préoccupant 🚨'; document.getElementById('sc3').classList.add('hl'); }
+}
+
+/* ══════════════════════════════════════════
+   NAVIGATION
+══════════════════════════════════════════ */
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.getElementById('nav-'+id).classList.add('active');
+  if (id==='jouez') {
+    document.getElementById('jouez-warn').style.display = !S.profile.age ? 'block' : 'none';
+    updateCounters();
+  }
+  if (id==='recap') updateRecap();
+  window.scrollTo(0,0);
+}
+
+function resetAll() {
+  if (!confirm('Réinitialiser toutes les données de la semaine ?')) return;
+  DAYS.forEach(d => S.days[d] = { modMins:0, intMins:0, intake:0, foods:[] });
+  save(); updateRecap(); updateCounters();
+}
+
+/* ══════════════════════════════════════════
+   INIT
+══════════════════════════════════════════ */
+function initDropdowns() {
+  const age = document.getElementById('sel-age');
+  for (let a=8;a<=20;a++) age.innerHTML += `<option value="${a}">${a} ans</option>`;
+  const tai = document.getElementById('sel-taille');
+  for (let t=120;t<=210;t++) tai.innerHTML += `<option value="${t}">${t} cm</option>`;
+  const poi = document.getElementById('sel-poids');
+  for (let p=25;p<=130;p++) poi.innerHTML += `<option value="${p}">${p} kg</option>`;
+}
+
+function initActivities() {
+  document.getElementById('act-mod').innerHTML = ACT_MOD.map(a =>
+    `<button class="act-btn mod" onclick="addAct('mod')">
+      <span class="ae">${a.e}</span>
+      <span class="an">${a.n}</span>
+      <span class="ac">+30 min</span>
+    </button>`).join('');
+  document.getElementById('act-int').innerHTML = ACT_INT.map(a =>
+    `<button class="act-btn int" onclick="addAct('int')">
+      <span class="ae">${a.e}</span>
+      <span class="an">${a.n}</span>
+      <span class="ac">+30 min</span>
+    </button>`).join('');
+}
+
+function initFoods() {
+  // calories section (static display)
+  document.getElementById('calories-grid').innerHTML = FOODS.map(f =>
+    `<div class="food-btn static">
+      <span class="fe">${f.e}</span>
+      <span class="fn">${f.n}</span>
+      <span class="fk">${f.k} kcal</span>
+    </div>`).join('');
+  // jouez section (interactive)
+  document.getElementById('jouez-food-grid').innerHTML = FOODS.map((f,i) =>
+    `<button class="food-btn" onclick="addFood(${i})">
+      <span class="fe">${f.e}</span>
+      <span class="fn">${f.n}</span>
+      <span class="fk">${f.k} kcal</span>
+    </button>`).join('');
+}
+
+function initDays() {
+  document.getElementById('day-selector').innerHTML = DAYS.map(d =>
+    `<button class="day-btn${d===S.currentDay?' active':''}" id="dbtn-${d}" onclick="selectDay('${d}')">${d}</button>`
+  ).join('');
+  document.getElementById('act-day-lbl').textContent = S.currentDay;
+  document.getElementById('food-day-lbl').textContent = S.currentDay;
+}
+
+function selectDay(d) {
+  S.currentDay = d;
+  document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('dbtn-'+d).classList.add('active');
+  document.getElementById('act-day-lbl').textContent = d;
+  document.getElementById('food-day-lbl').textContent = d;
+  updateCounters();
+}
+
+function restoreProfile() {
+  if (!S.profile.age) return;
+  document.getElementById('sel-age').value   = S.profile.age;
+  document.getElementById('sel-taille').value = S.profile.taille;
+  document.getElementById('sel-poids').value  = S.profile.poids;
+  document.getElementById('sel-sexe').value   = S.profile.sexe;
+  document.getElementById('bmr-daily').textContent  = S.bmrD;
+  document.getElementById('bmr-hourly').textContent = S.bmrH;
+  document.getElementById('profil-result').style.display = 'block';
+}
+
+/* ── BOOT ── */
+load();
+initDropdowns();
+initActivities();
+initFoods();
+initDays();
+restoreProfile();
+updateCounters();
+</script>
+</body>
+</html>
